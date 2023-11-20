@@ -31,7 +31,7 @@ class UserResource extends Resource
                 TextInput::make('password')->password(),
                 Select::make('name')->options([
                     'test'=> 'test',
-                    'magang'=> 'another one',
+                    'ADMIN'=> 'another one',
                 ]),
             ]);
     }
