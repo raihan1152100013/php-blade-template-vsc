@@ -3,26 +3,25 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
-use App\Models\User;
 use Filament\Tables;
+use App\Models\Owner;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\OwnerResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\OwnerResource\RelationManagers;
 
-class UserResource extends Resource
+class OwnerResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = Owner::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -30,13 +29,18 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required(),
-                TextInput::make('email')->email(),
-                TextInput::make('password')->password(),
-                Select::make('name')->options([
-                    'test'=> 'test',
-                    'ADMIN'=> 'another one',
-                ]),
+            TextInput::make('name')
+            ->required()
+            ->maxLength(255),
+            TextInput::make('email')
+            ->label('Email address')
+            ->email()
+            ->required()
+            ->maxLength(255),
+            TextInput::make('phone')
+            ->label('Phone number')
+            ->tel()
+            ->required(),
             ]);
     }
 
@@ -44,20 +48,20 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id'),
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable(),
                 TextColumn::make('email'),
+                TextColumn::make('phone')->sortable(),
+                TextColumn::make('phone number')->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 EditAction::make(),
-                //
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
@@ -75,9 +79,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListOwners::route('/'),
+            'create' => Pages\CreateOwner::route('/create'),
+            'edit' => Pages\EditOwner::route('/{record}/edit'),
         ];
     }    
 }
